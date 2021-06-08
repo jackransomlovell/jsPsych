@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="jspsych-6.3.1/jspsych.js"></script>
+    <script src="jspsych-collab-filtering.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-preload.js"></script>
+    <link rel="stylesheet" href="jspsych-6.3.1/css/jspsych.css">
+  </head>
+  <body></body>
+  <script>
+  
+  // preloading videos only works when the file is running on a server
+  // if you run this experiment by opening the file directly in the browser, 
+  // then video preloading will be disabled to prevent CORS errors
+ 
+
+  var video = ['examples/video/sample_video.mp4']
+
+  var preload = {
+    type: 'preload',
+    video: video
+  } 
+
+  var trial_1 = {
+    type: 'collab-filtering',
+    videos: [{stimulus:'examples/video/sample_video.mp4'}],
+    pause_questions: [{prompt:'whatcha think'},
+                      {prompt:'now, tell me how ya really feel'}],
+    end_questions: [{prompt:'whatcha think'},
+                      {prompt:'now, tell me how ya really feel'}]
+  }
+
+  jsPsych.init({
+    timeline: [preload,trial_1]
+  });
+
+  </script>
+</html>
