@@ -53,7 +53,7 @@ jsPsych.plugins['collab-filtering'] = (function() {
           max_stop: { 
             type: jsPsych.plugins.parameterType.FLOAT,
             pretty_name: 'Start',
-            default: video_element.duration-10,
+            default: 10,
             description: 'Maximum time to stop the clip, default is the duration of the video minus ten seconds. '
           }
         }
