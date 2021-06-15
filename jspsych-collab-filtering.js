@@ -52,7 +52,7 @@ jsPsych.plugins['collab-filtering'] = (function() {
           },
           max_stop: { 
             type: jsPsych.plugins.parameterType.FLOAT,
-            pretty_name: 'Start',
+            pretty_name: 'Stop',
             default: 10,
             description: 'Maximum time to stop the clip, default is the duration of the video minus ten seconds. '
           }
@@ -179,7 +179,7 @@ jsPsych.plugins['collab-filtering'] = (function() {
       end_preamble: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Preamble',
-        default: pause_preamble.default, // is this correct??
+        default: null, // is this correct??
         description: 'String to display at top of the page for end set of questions. Set to pause by default'
       },
       button_label: {
