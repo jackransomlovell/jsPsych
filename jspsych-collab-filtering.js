@@ -9,54 +9,53 @@ jsPsych.plugins['collab-filtering'] = (function() {
   plugin.info = {
     name: "collab-filtering",
     parameters: {
-      videos: {
-        type: jsPsych.plugins.parameterType.COMPLEX, // BOOL, STRING, INT, FLOAT, FUNCTION, KEY, SELECT, HTML_STRING, IMAGE, AUDIO, VIDEO, OBJECT, COMPLEX
-        array: true,
-        pretty_name: 'Videos',
-        nested:{
-          stimulus: {
-            type: jsPsych.plugins.parameterType.VIDEO,
-            pretty_name: 'Videos',
-            default: undefined,
-            description: 'Videos to be displayed'
-          },
-          width: {
-            type: jsPsych.plugins.parameterType.INT,
-            pretty_name: 'Width',
-            default: '',
-            description: 'The width of the video in pixels.'
-          },
-          height: {
-            type: jsPsych.plugins.parameterType.INT,
-            pretty_name: 'Height',
-            default: '',
-            description: 'The height of the video display in pixels.'
-          },
-          autoplay: {
-            type: jsPsych.plugins.parameterType.BOOL,
-            pretty_name: 'Autoplay',
-            default: true,
-            description: 'If true, the video will begin playing as soon as it has loaded.'
-          },
-          controls: {
-            type: jsPsych.plugins.parameterType.BOOL,
-            pretty_name: 'Controls',
-            default: false,
-            description: 'If true, the subject will be able to pause the video or move the playback to any point in the video.'
-          },
-          min_stop: { 
-            type: jsPsych.plugins.parameterType.FLOAT,
-            pretty_name: 'Start',
-            default: 10,
-            description: 'Minimum time to stop the clip.'
-          },
-          max_stop: { 
-            type: jsPsych.plugins.parameterType.FLOAT,
-            pretty_name: 'Stop',
-            default: 10,
-            description: 'Maximum time to stop the clip, default is the duration of the video minus ten seconds. '
-          }
-        }
+      stimulus: {
+        type: jsPsych.plugins.parameterType.VIDEO,
+        pretty_name: 'Video',
+        default: undefined,
+        description: 'The video file to play.'
+      },
+      prompt: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Prompt',
+        default: null,
+        description: 'Any content here will be displayed below the buttons.'
+      },
+      width: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Width',
+        default: '',
+        description: 'The width of the video in pixels.'
+      },
+      height: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Height',
+        default: '',
+        description: 'The height of the video display in pixels.'
+      },
+      autoplay: {
+        type: jsPsych.plugins.parameterType.BOOL,
+        pretty_name: 'Autoplay',
+        default: true,
+        description: 'If true, the video will begin playing as soon as it has loaded.'
+      },
+      controls: {
+        type: jsPsych.plugins.parameterType.BOOL,
+        pretty_name: 'Controls',
+        default: false,
+        description: 'If true, the subject will be able to pause the video or move the playback to any point in the video.'
+      },
+      min_stop: {
+        type: jsPsych.plugins.parameterType.FLOAT,
+        pretty_name: 'Start',
+        default: null,
+        description: 'Time to start the clip.'
+      },
+      max_stop: {
+        type: jsPsych.plugins.parameterType.FLOAT,
+        pretty_name: 'Stop',
+        default: null,
+        description: 'Time to stop the clip.'
       },
       ranomize_video_order:{
         type:jsPsych.plugins.parameterType.BOOL,
@@ -215,25 +214,25 @@ jsPsych.plugins['collab-filtering'] = (function() {
     var video_html = '<div>'
     video_html += '<video id="jspsych-collab-filtering-pause-stimulus"';
 
-    if(trial.videos[0].width) {
-      video_html += ' width="'+trial.videos[0].width+'"';
+    if(trial.width) {
+      video_html += ' width="'+trial.width+'"';
     }
-    if(trial.videos[0].height) {
-      video_html += ' height="'+trial.videos[0].height+'"';
+    if(trial.height) {
+      video_html += ' height="'+trial.height+'"';
     }
 
     // automatically start at the beginning of the video
     video_html += " autoplay ";
 
-    if(trial.videos[0].controls){
+    if(trial.controls){
       video_html +=" controls ";
     }
     
     video_html +=">";
 
-    var video_preload_blob = jsPsych.pluginAPI.getVideoBuffer(trial.videos[0].stimulus);
+    var video_preload_blob = jsPsych.pluginAPI.getVideoBuffer(trial.stimulus[0]);
     if(!video_preload_blob) {
-      for(var i=0; i<trial.videos[0].stimulus.length; i++){
+      for(var i=0; i<trial.stimulus.length; i++){
         var file_name = trial.videos[i].stimulus;
         if(file_name.indexOf('?') > -1){
           file_name = file_name.substring(0, file_name.indexOf('?'));
@@ -250,8 +249,8 @@ jsPsych.plugins['collab-filtering'] = (function() {
     video_html += "</div>";
 
     // add prompt if there is one
-    if (trial.videos[0].prompt !== null) {
-      video_html += trial.videos[0].prompt;
+    if (trial.prompt !== null) {
+      video_html += trial.prompt;
     }
 
     display_element.innerHTML = video_html;
@@ -267,9 +266,9 @@ jsPsych.plugins['collab-filtering'] = (function() {
       // get video duration
       var duration = vid.duration;
       //specify the max time
-      var max = duration - trial.videos[0].max_stop
+      var max = duration - trial.max_stop
       //specify the minimum time
-      var min = trial.videos[0].min_stop;
+      var min = trial.min_stop;
       //get a ranom number 
       var rand_pause = Math.random() * (max-min) + min
       return rand_pause
@@ -277,6 +276,10 @@ jsPsych.plugins['collab-filtering'] = (function() {
 
     // get random pause 
     var pausetime = rand_stop('jspsych-collab-filtering-pause-stimulus');
+    console.log('duration')
+    console.log(document.getElementById('jspsych-collab-filtering-pause-stimulus').duration)
+    console.log('random stop')
+    console.log(pausetime)
 
 
     // end first video portion of the experiment
