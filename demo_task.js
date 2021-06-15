@@ -1,7 +1,6 @@
-var video = ['duck.mp4']
 var preload = {
   type: 'preload',
-  video: video
+  video: ['duck.mp4']
 } 
 var trial_1 = {
   type: 'collab-filtering',

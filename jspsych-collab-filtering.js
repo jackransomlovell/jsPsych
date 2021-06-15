@@ -231,10 +231,10 @@ jsPsych.plugins['collab-filtering'] = (function() {
     
     video_html +=">";
 
-    var video_preload_blob = jsPsych.pluginAPI.getVideoBuffer(trial.videos.stimulus[0]);
+    var video_preload_blob = jsPsych.pluginAPI.getVideoBuffer(trial.videos[0].stimulus);
     if(!video_preload_blob) {
-      for(var i=0; i<trial.videos.stimulus.length; i++){
-        var file_name = trial.videos.stimulus[i];
+      for(var i=0; i<trial.videos[0].stimulus.length; i++){
+        var file_name = trial.videos.videos[i].stimulus;
         if(file_name.indexOf('?') > -1){
           file_name = file_name.substring(0, file_name.indexOf('?'));
         }
