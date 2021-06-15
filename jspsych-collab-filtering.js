@@ -215,17 +215,17 @@ jsPsych.plugins['collab-filtering'] = (function() {
     var video_html = '<div>'
     video_html += '<video id="jspsych-collab-filtering-pause-stimulus"';
 
-    if(trial.videos.width) {
-      video_html += ' width="'+trial.videos.width+'"';
+    if(trial.videos[0].width) {
+      video_html += ' width="'+trial.videos[0].width+'"';
     }
-    if(trial.videos.height) {
-      video_html += ' height="'+trial.videos.height+'"';
+    if(trial.videos[0].height) {
+      video_html += ' height="'+trial.videos[0].height+'"';
     }
 
     // automatically start at the beginning of the video
     video_html += " autoplay ";
 
-    if(trial.videos.controls){
+    if(trial.videos[0].controls){
       video_html +=" controls ";
     }
     
@@ -234,7 +234,7 @@ jsPsych.plugins['collab-filtering'] = (function() {
     var video_preload_blob = jsPsych.pluginAPI.getVideoBuffer(trial.videos[0].stimulus);
     if(!video_preload_blob) {
       for(var i=0; i<trial.videos[0].stimulus.length; i++){
-        var file_name = trial.videos.videos[i].stimulus;
+        var file_name = trial.videos[i].stimulus;
         if(file_name.indexOf('?') > -1){
           file_name = file_name.substring(0, file_name.indexOf('?'));
         }
@@ -250,8 +250,8 @@ jsPsych.plugins['collab-filtering'] = (function() {
     video_html += "</div>";
 
     // add prompt if there is one
-    if (trial.videos.prompt !== null) {
-      video_html += trial.videos.prompt;
+    if (trial.videos[0].prompt !== null) {
+      video_html += trial.videos[0].prompt;
     }
 
     display_element.innerHTML = video_html;
@@ -262,37 +262,21 @@ jsPsych.plugins['collab-filtering'] = (function() {
       video_element.src = video_preload_blob;
     }
 
-    function rand_stop(video){
-      // check to see if it is video_elem.
-      try{
-        if(video.tagName != 'div') throw 'video_element not actually a div'
-      }
-      catch(err){
-        message.innerHTML = "Video is" + video.tagName
-      }
+    function rand_stop(vid_id){
+      var vid = document.getElementById(vid_id)
       // get video duration
-      var duration = video.duration;
+      var duration = vid.duration;
       //specify the max time
-      var max = duration - trial.videos.max_stop
+      var max = duration - trial.videos[0].max_stop
       //specify the minimum time
-      var min = trial.videos.min_stop;
-      //check if the number is greater than 0
-      try {
-        var diff = max - min
-        if(diff <= 0) throw "duration is not greater than the difference between start and end, please choose a different video"
-      }
-      catch(err){
-        message.innerHTML = "Difference between start and end is" + diff;
-      }
+      var min = trial.videos[0].min_stop;
       //get a ranom number 
       var rand_pause = Math.random() * (max-min) + min
       return rand_pause
     }
 
-    // get random pause and push to global array for data writing and resuming the video
-    var pauses = [];
-    var pausetime = rand_stop(video_element);
-    pauses.push(pausetime)
+    // get random pause 
+    var pausetime = rand_stop('jspsych-collab-filtering-pause-stimulus');
 
 
     // end first video portion of the experiment
@@ -415,9 +399,6 @@ jsPsych.plugins['collab-filtering'] = (function() {
     display_element.querySelector("#jspsych-collab-filtering-slider-pause-form").addEventListener('submit', function(e){
       e.preventDefault();
       // measure response time
-      var endTime = performance.now();
-      var response_time = endTime - startTime;
-  
       // create object to hold responses
       var question_data = {};
   
@@ -444,58 +425,12 @@ jsPsych.plugins['collab-filtering'] = (function() {
 
     //SECOND VIDEO AND LAST TRIAL
     // setup stimulus
-    var video_html = '<div>'
-    video_html += '<video id="jspsych-collab-filtering-end-stimulus"';
-
-    if(trial.videos.width) {
-      video_html += ' width="'+trial.videos.width+'"';
-    }
-    if(trial.videos.height) {
-      video_html += ' height="'+trial.videos.height+'"';
-    }
-
-    // automatically start at the beginning of the video
-    video_html += " autoplay ";
-
-    if(trial.videos.controls){
-      video_html +=" controls ";
-    }
-    
-    video_html +=">";
-
-    var video_preload_blob = jsPsych.pluginAPI.getVideoBuffer(trial.videos.stimulus[0]);
-    if(!video_preload_blob) {
-      for(var i=0; i<trial.stimulus.length; i++){
-        var file_name = trial.stimulus[i];
-        if(file_name.indexOf('?') > -1){
-          file_name = file_name.substring(0, file_name.indexOf('?'));
-        }
-        var type = file_name.substr(file_name.lastIndexOf('.') + 1);
-        type = type.toLowerCase();
-        if (type == "mov") {
-          console.warn('Warning: collab-filtering plugin does not reliably support .mov files.')
-        }
-        video_html+='<source src="' + file_name + '" type="video/'+type+'">';   
-      }
-    }
-    video_html += "</video>";
-    video_html += "</div>";
-
-    // add prompt if there is one
-    if (trial.prompt !== null) {
-      video_html += trial.prompt;
-    }
-
     display_element.innerHTML = video_html;
 
-    var video_element = display_element.querySelector('#jspsych-collab-filtering-end-stimulus');
-
-    if(video_preload_blob){
-      video_element.src = video_preload_blob;
-    }
+    var video_element = display_element.querySelector('#jspsych-collab-filtering-pause-stimulus');
 
     video_element.pause();
-    video_element.currentTime = pauses[pauses.length-1];
+    video_element.currentTime = pausetime;
     video_element.onseeked = function() {
         video_element.style.visibility = "visible";
         video_element.play();
