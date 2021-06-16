@@ -265,7 +265,7 @@ jsPsych.plugins['collab-filtering'] = (function() {
         video_element.src = video_preload_blob;
       }
 
-      return video_element
+      return  video_element
     }
     
     //get video element
@@ -289,7 +289,7 @@ jsPsych.plugins['collab-filtering'] = (function() {
     var pauses=[]
 
     //pause the video at a random point
-    function pause_video(){
+    function pause_video(video_element){
       //check if video is loaded
       var video = document.getElementById('jspsych-collab-filtering-pause-stimulus')
       if(video.readyState == 4){
@@ -310,7 +310,7 @@ jsPsych.plugins['collab-filtering'] = (function() {
         })
       }
     }
-    pause_video()
+    pause_video(video_element)
 
     //build pause slider
     function pause_slider(){
@@ -451,7 +451,6 @@ jsPsych.plugins['collab-filtering'] = (function() {
         display_element.innerHTML = '';
       }
     }
-
     pause_slider()
 
     //SECOND VIDEO AND LAST TRIAL
@@ -612,7 +611,7 @@ jsPsych.plugins['collab-filtering'] = (function() {
         display_element.innerHTML = '';
       }
     }
-    
+    end_slider()
     // end trial
     jsPsych.finishTrial()
   }
